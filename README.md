@@ -1,4 +1,5 @@
 ```
 ./test.py --num_blocks 10 --blocksize 5 --strength 1
-python real.py
 ```
+
+![](http://www.mit.edu/~mattjj/github/misc/block_recovery.png)
