@@ -20,7 +20,9 @@ def symmetric_blocky_trans(blocksize,num_blocks,p_on=0.2,strength=0.2):
     n = blocksize*num_blocks
     out = np.zeros((n,n))
 
-    bd_support = np.kron(np.eye(num_blocks,dtype=bool),np.ones((blocksize,blocksize),dtype=bool))
+    bd_support = np.kron(
+            np.eye(num_blocks,dtype=bool),
+            np.ones((blocksize,blocksize),dtype=bool))
     out[bd_support] = np.random.uniform(0.5,1,size=bd_support.sum())
 
     obd_support = np.logical_and(
@@ -32,6 +34,25 @@ def symmetric_blocky_trans(blocksize,num_blocks,p_on=0.2,strength=0.2):
     out = symmetric_normalize(out)
 
     return out
+
+def asymmetric_blocky_trans(blocksize,num_blocks,p_on=0.2,strength=0.2):
+    n = blocksize*num_blocks
+    out = np.zeros((n,n))
+
+    bd_support = np.kron(
+            np.eye(num_blocks,dtype=bool),
+            np.ones((blocksize,blocksize),dtype=bool))
+    out[bd_support] = np.random.uniform(0.5,1,size=bd_support.sum())
+
+    obd_support = np.logical_and(
+            np.logical_not(bd_support),
+            np.random.uniform(size=(n,n)) < p_on)
+    out[obd_support] = np.random.uniform(0,strength,size=obd_support.sum())
+
+    out /= out.sum(1)[:,None]
+
+    return out
+
 
 
 # TODO how blocky do non-blocky random matrices look when asked to blockify?
