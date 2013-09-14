@@ -12,11 +12,12 @@ from matplotlib import pyplot as plt
 
 class SpectralBlockify(object):
     """Find blocks in a matrix"""
-    def __init__(self, n_blocks=None, n_eigenvectors=None, order_within_blocks=True, ap_damping=0.5, ap_preference=None):
+    def __init__(self, n_blocks=None, n_eigenvectors=None, order_within_blocks=True, order_between_blocks=True, ap_damping=0.5, ap_preference=None):
         super(SpectralBlockify, self).__init__()
         self.n_blocks = n_blocks
         self.n_eigenvectors = n_eigenvectors
         self.order_within_blocks = order_within_blocks
+        self.order_between_blocks = order_between_blocks
         self.ap_damping = ap_damping
         self.ap_preference = ap_preference
 
@@ -37,6 +38,16 @@ class SpectralBlockify(object):
         else:
             apNode = AffinityPropagation(damping=self.ap_damping, preference=self.ap_preference).fit(A)
             self.block_labels_ = apNode.labels_
+
+        if self.order_between_blocks:
+            # Get the within-block mean entropy
+            new_order = np.zeros_like(np.unique(self.block_labels_))
+            mean_probs = [A[self.block_labels_ == i_block].mean() for i_block in np.unique(self.block_labels_)]
+            new_order = np.argsort(mean_probs)[::-1]
+
+            # Swap the labels
+            self.block_labels_ = new_order[self.block_labels_]
+            
 
         # With the clustering, create the permutation
         if self.order_within_blocks == False:
@@ -87,7 +98,6 @@ class SpectralBlockify(object):
                 return A
         print 'warning: reached max iter'
         return A
-
 
 def get_spectrum(A):
     vals, vecs = np.linalg.eig(A)
