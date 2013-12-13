@@ -10,6 +10,97 @@ from sklearn.cluster import KMeans, AffinityPropagation
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import pyplot as plt
 
+
+"""import numpy as np
+import pandas as pd
+import pymouse
+import os
+import spectral_clustering.spclust as sp
+from numpy import newaxis as na
+from pymouse import entropy
+
+def norm_statemap(A):
+    d = np.repeat(A.sum(1)[:,na], len(A), 1)
+    d[d==0] = 1.0
+    A = A/d
+    return A
+
+import numpy as np
+import pandas as pd
+import pymouse
+import os
+import spectral_clustering.spclust as sp
+from numpy import newaxis as na
+from pymouse import entropy
+
+def norm_statemap(A):
+    d = np.repeat(A.sum(1)[:,na], len(A), 1)
+    d[d==0] = 1.0
+    A = A/d
+    return A
+
+big_df = df[(df.n_states == 200) & (df.libsize == 200)].reset_index().iloc[1]
+small_df = best_df.copy()
+this_df = big_df.copy()
+
+A = this_df['transition_matrix']
+Ad = this_df['deployment_matrix']
+A = pymouse.entropy.crop_trans_matrix(A)
+Ad = pymouse.entropy.crop_trans_matrix(Ad)
+
+H = np.zeros_like(A)
+n = H.shape[0]
+for j in range(n):
+    not_j = np.arange(n)!=j
+    d = (np.eye(n-1) - A[np.ix_(not_j,not_j)])
+    di = np.linalg.inv(d)
+    H[np.ix_(not_j,[j])] = np.dot(di,np.ones((n-1,1)))
+
+n_blocks = 7
+n_eigvecs = 7
+figsize = (10,10)
+
+
+# Show the permuted transition matrices
+newBlock = sp.SpectralBlockify(n_blocks,n_eigvecs)
+newBlock.fit(H)
+q = newBlock.permute(Ad)
+figure()
+gs = GridSpec(1,2, hspace=0.1, wspace=0.01, width_ratios=[100,5])
+figure(figsize=figsize)
+subplot(gs[0])
+imshow(q)
+subplot(gs[1])
+imshow(newBlock.block_labels_[:,na][newBlock.permutation_], cmap='Paired')
+axis('off')
+
+# Show the permuted flow matrices
+Hn = newBlock._symmetric_normalize(H)
+for i in range(len(Hn)):
+    Hn[i,i] = np.nan
+q = newBlock.permute(np.sqrt(1.0/Hn))
+gs = GridSpec(1,2, hspace=0.1, wspace=0.01, width_ratios=[100,5])
+figure(figsize=figsize)
+subplot(gs[0])
+imshow(q)
+subplot(gs[1])
+imshow(newBlock.block_labels_[:,na][newBlock.permutation_], cmap='Paired')
+axis('off')
+
+
+# Show the permuted transition matrices
+newBlock = sp.SpectralBlockify(n_blocks,n_eigvecs)
+newBlock.fit(Ad)
+q = newBlock.permute(Ad)
+gs = GridSpec(1,2, hspace=0.1, wspace=0.01, width_ratios=[100,5])
+figure(figsize=figsize)
+subplot(gs[0])
+imshow(q)
+subplot(gs[1])
+imshow(newBlock.block_labels_[:,na][newBlock.permutation_], cmap='Paired')
+axis('off')
+"""
+
 class SpectralBlockify(object):
     """Find blocks in a matrix"""
     def __init__(self, n_blocks=None, n_eigenvectors=None, order_within_blocks=True, order_between_blocks=True, ap_damping=0.5, ap_preference=None):
