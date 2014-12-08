@@ -162,6 +162,8 @@ class SpectralBlockify(object):
             # Now create a permutation
             self.permutation_ = np.hstack(this_permutation)
 
+        return self
+
     def permute(self, A):
         return A[np.ix_(self.permutation_, self.permutation_)]
 
