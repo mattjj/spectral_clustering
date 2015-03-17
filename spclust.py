@@ -1,105 +1,8 @@
-# TODO
-# Try out AffinityPropagation
-# Raise errors for n_eigenvectors
-# Raise error for n_blocks
-
-
 from __future__ import division
 import numpy as np
 from sklearn.cluster import KMeans, AffinityPropagation
-from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import pyplot as plt
 
-
-"""import numpy as np
-import pandas as pd
-import pymouse
-import os
-import spectral_clustering.spclust as sp
-from numpy import newaxis as na
-from pymouse import entropy
-
-def norm_statemap(A):
-    d = np.repeat(A.sum(1)[:,na], len(A), 1)
-    d[d==0] = 1.0
-    A = A/d
-    return A
-
-import numpy as np
-import pandas as pd
-import pymouse
-import os
-import spectral_clustering.spclust as sp
-from numpy import newaxis as na
-from pymouse import entropy
-
-def norm_statemap(A):
-    d = np.repeat(A.sum(1)[:,na], len(A), 1)
-    d[d==0] = 1.0
-    A = A/d
-    return A
-
-big_df = df[(df.n_states == 200) & (df.libsize == 200)].reset_index().iloc[1]
-small_df = best_df.copy()
-this_df = big_df.copy()
-
-A = this_df['transition_matrix']
-Ad = this_df['deployment_matrix']
-A = pymouse.entropy.crop_trans_matrix(A)
-Ad = pymouse.entropy.crop_trans_matrix(Ad)
-
-H = np.zeros_like(A)
-n = H.shape[0]
-for j in range(n):
-    not_j = np.arange(n)!=j
-    d = (np.eye(n-1) - A[np.ix_(not_j,not_j)])
-    di = np.linalg.inv(d)
-    H[np.ix_(not_j,[j])] = np.dot(di,np.ones((n-1,1)))
-
-n_blocks = 7
-n_eigvecs = 7
-figsize = (10,10)
-
-
-# Show the permuted transition matrices
-newBlock = sp.SpectralBlockify(n_blocks,n_eigvecs)
-newBlock.fit(H)
-q = newBlock.permute(Ad)
-figure()
-gs = GridSpec(1,2, hspace=0.1, wspace=0.01, width_ratios=[100,5])
-figure(figsize=figsize)
-subplot(gs[0])
-imshow(q)
-subplot(gs[1])
-imshow(newBlock.block_labels_[:,na][newBlock.permutation_], cmap='Paired')
-axis('off')
-
-# Show the permuted flow matrices
-Hn = newBlock._symmetric_normalize(H)
-for i in range(len(Hn)):
-    Hn[i,i] = np.nan
-q = newBlock.permute(np.sqrt(1.0/Hn))
-gs = GridSpec(1,2, hspace=0.1, wspace=0.01, width_ratios=[100,5])
-figure(figsize=figsize)
-subplot(gs[0])
-imshow(q)
-subplot(gs[1])
-imshow(newBlock.block_labels_[:,na][newBlock.permutation_], cmap='Paired')
-axis('off')
-
-
-# Show the permuted transition matrices
-newBlock = sp.SpectralBlockify(n_blocks,n_eigvecs)
-newBlock.fit(Ad)
-q = newBlock.permute(Ad)
-gs = GridSpec(1,2, hspace=0.1, wspace=0.01, width_ratios=[100,5])
-figure(figsize=figsize)
-subplot(gs[0])
-imshow(q)
-subplot(gs[1])
-imshow(newBlock.block_labels_[:,na][newBlock.permutation_], cmap='Paired')
-axis('off')
-"""
 
 class SpectralBlockify(object):
     """Find blocks in a matrix"""
@@ -124,7 +27,7 @@ class SpectralBlockify(object):
         eigvecs_to_cluster = vecs[:,-(self.n_eigenvectors+1):-1]
         # Then, cluster the eigenvectors
 
-        if self.n_blocks != None:
+        if self.n_blocks is not None:
             self.block_labels_ = KMeans(self.n_blocks).fit_predict(eigvecs_to_cluster)
         else:
             apNode = AffinityPropagation(damping=self.ap_damping, preference=self.ap_preference).fit(A)
@@ -138,7 +41,7 @@ class SpectralBlockify(object):
 
             # Swap the labels
             self.block_labels_ = new_order[self.block_labels_]
-            
+
 
         # With the clustering, create the permutation
         if self.order_within_blocks == False:
@@ -146,7 +49,7 @@ class SpectralBlockify(object):
         else:
             within_block_idx = []
             this_permutation = []
-            
+
             for i_block in np.unique(self.block_labels_):
                 # Get all of the out-of-block values
                 # For each row within the block
@@ -192,6 +95,7 @@ class SpectralBlockify(object):
         print 'warning: reached max iter'
         return A
 
+
 def get_spectrum(A):
     vals, vecs = np.linalg.eig(A)
     order = np.argsort(np.abs(vals))
@@ -201,6 +105,7 @@ def get_spectrum(A):
 def find_blockifying_perm(A,k,nclusters):
     _, vecs = get_spectrum(A)
     return np.argsort(KMeans(n_clusters=nclusters).fit(vecs[:,-(k+1):-1]).labels_)
+
 
 def plot(A,tol=1e-5,plot=True):
     _, vecs = get_spectrum(A)
@@ -212,6 +117,7 @@ def plot(A,tol=1e-5,plot=True):
             if A[i,j] > tol:
                 plt.plot((xs[i],xs[j]),(ys[i],ys[j]),'b-',alpha=A[i,j]/themax)
     return xs, ys
+
 
 def plot3D(A,tol=1e-5,plot=True):
     _, vecs = get_spectrum(A)
