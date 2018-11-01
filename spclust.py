@@ -82,7 +82,7 @@ class SpectralBlockify(object):
 
     def _symmetric_normalize(self, A,maxiter=500):
         A = (A+A.T)/2.0
-        for i in xrange(maxiter):
+        for i in range(maxiter):
             prev = A.copy()
             d = A.sum(0)
             d[d==0] = 1.0

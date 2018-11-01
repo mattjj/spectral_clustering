@@ -3,7 +3,7 @@ import numpy as np
 
 
 def symmetric_normalize(A,maxiter=5000):
-    for i in xrange(maxiter):
+    for i in range(maxiter):
         prev = A.copy()
         A /= A.sum(0)
         A /= A.sum(1)[:,None]
