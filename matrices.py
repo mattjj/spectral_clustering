@@ -9,7 +9,7 @@ def symmetric_normalize(A,maxiter=5000):
         A /= A.sum(1)[:,None]
         if np.allclose(prev,A,atol=1e-10,rtol=1e-12):
             return A
-    print 'warning: reached max iter'
+    print('warning: reached max iter')
     return A
 
 
